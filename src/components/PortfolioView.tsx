@@ -14,6 +14,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import ProjectModal from "./ProjectModal";
+import { CURATED_PROJECT_DETAILS } from "@/data/projectDetails";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -107,10 +108,9 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const filteredProjects = useMemo(() => {
     return originalProjects
       .filter((project) => {
-        const matchesSearch =
-          project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          project.topics.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        const curated = CURATED_PROJECT_DETAILS[project.name];
+        const searchTarget = `${project.name} ${curated?.overview || project.description} ${curated?.role || ""} ${project.topics.join(" ")} ${curated?.techStack?.map((t) => t.items.join(" ")).join(" ") || ""}`.toLowerCase();
+        const matchesSearch = searchTarget.includes(searchQuery.toLowerCase());
 
         if (!matchesSearch) return false;
 
@@ -221,46 +221,68 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
             <span className="text-xs text-slate-400">카드를 클릭하여 상세 아키텍처 보기</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {featuredProjects.map((project) => (
-              <div
-                key={project.id}
-                onClick={() => setSelectedProject(project)}
-                className="group relative p-6 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/80 to-slate-900/80 border border-indigo-500/30 hover:border-indigo-500/70 transition-all duration-300 shadow-xl hover:shadow-indigo-500/10 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                      ★ Featured
-                    </span>
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                      <span className="flex items-center gap-1">
-                        <RefreshCw className="w-3 h-3" /> {timeAgo(project.pushedAt)}
-                      </span>
-                      <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+            {featuredProjects.map((project) => {
+              const curated = CURATED_PROJECT_DETAILS[project.name];
+              const overview = curated?.overview || project.description;
+              const role = curated?.role;
+              const topTechs = curated?.techStack
+                ? curated.techStack.flatMap((s) => s.items).slice(0, 4)
+                : project.topics.slice(0, 4);
+
+              return (
+                <div
+                  key={project.id}
+                  onClick={() => setSelectedProject(project)}
+                  className="group relative p-6 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/80 to-slate-900/80 border border-indigo-500/30 hover:border-indigo-500/70 transition-all duration-300 shadow-xl hover:shadow-indigo-500/10 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                          ★ Featured
+                        </span>
+                        {role && (
+                          <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-blue-950/70 text-blue-300 border border-blue-800/40">
+                            {role}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-400 shrink-0">
+                        <span className="flex items-center gap-1">
+                          <RefreshCw className="w-3 h-3" /> {timeAgo(project.pushedAt)}
+                        </span>
+                        <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                      </div>
                     </div>
+
+                    <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
+                      {project.name}
+                    </h3>
+                    <p className="text-sm text-slate-300 leading-relaxed mb-4 line-clamp-3">
+                      {overview}
+                    </p>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
-                    {project.name}
-                  </h3>
-                  <p className="text-sm text-slate-300 leading-relaxed mb-4 line-clamp-3">
-                    {project.description}
-                  </p>
-                </div>
-
-                <div>
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {project.language && (
-                      <span className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${LANGUAGE_COLORS[project.language] || LANGUAGE_COLORS.Other}`}>
-                        {project.language}
-                      </span>
-                    )}
-                    {project.topics.slice(0, 4).map((topic) => (
-                      <span key={topic} className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/50">
-                        #{topic}
-                      </span>
-                    ))}
-                  </div>
+                  <div>
+                    <div className="flex flex-wrap gap-1.5 mb-4">
+                      {project.language && (
+                        <span
+                          className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${
+                            LANGUAGE_COLORS[project.language] || LANGUAGE_COLORS.Other
+                          }`}
+                        >
+                          {project.language}
+                        </span>
+                      )}
+                      {topTechs.map((tech) => (
+                        <span
+                          key={tech}
+                          className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/50"
+                        >
+                          {tech.startsWith("#") ? tech : `#${tech}`}
+                        </span>
+                      ))}
+                    </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
                     <div className="flex items-center gap-3 text-xs text-slate-400">
@@ -307,7 +329,8 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                   </div>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         </section>
       )}
@@ -402,49 +425,64 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredProjects.map((project) => (
-              <div
-                key={project.id}
-                onClick={() => setSelectedProject(project)}
-                className="group relative p-5 rounded-xl bg-slate-900/50 hover:bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 transition-all duration-200 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-950/50 cursor-pointer"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-2.5">
-                    <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
-                        LANGUAGE_COLORS[project.language] || LANGUAGE_COLORS.Other
-                      }`}
-                    >
-                      {project.language}
-                    </span>
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                      <span>{timeAgo(project.pushedAt)}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+            {filteredProjects.map((project) => {
+              const curated = CURATED_PROJECT_DETAILS[project.name];
+              const overview = curated?.overview || project.description;
+              const role = curated?.role;
+              const topTechs = curated?.techStack
+                ? curated.techStack.flatMap((s) => s.items).slice(0, 3)
+                : project.topics.slice(0, 3);
+
+              return (
+                <div
+                  key={project.id}
+                  onClick={() => setSelectedProject(project)}
+                  className="group relative p-5 rounded-xl bg-slate-900/50 hover:bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 transition-all duration-200 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-950/50 cursor-pointer"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-2.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${
+                            LANGUAGE_COLORS[project.language] || LANGUAGE_COLORS.Other
+                          }`}
+                        >
+                          {project.language}
+                        </span>
+                        {role && (
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-950/60 text-blue-300 border border-blue-800/40 line-clamp-1 max-w-[160px]">
+                            {role}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 shrink-0">
+                        <span>{timeAgo(project.pushedAt)}</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+                      </div>
                     </div>
+
+                    <h3 className="font-bold text-base text-slate-100 group-hover:text-indigo-300 transition-colors mb-2 break-all">
+                      {project.name}
+                    </h3>
+
+                    <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 mb-4">
+                      {overview}
+                    </p>
                   </div>
 
-                  <h3 className="font-bold text-base text-slate-100 group-hover:text-indigo-300 transition-colors mb-2 break-all">
-                    {project.name}
-                  </h3>
-
-                  <p className="text-xs text-slate-400 leading-relaxed line-clamp-3 mb-4">
-                    {project.description}
-                  </p>
-                </div>
-
-                <div>
-                  {project.topics.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {project.topics.slice(0, 3).map((topic) => (
-                        <span
-                          key={topic}
-                          className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950/80 text-slate-400 border border-slate-800"
-                        >
-                          #{topic}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <div>
+                    {topTechs.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {topTechs.map((tech) => (
+                          <span
+                            key={tech}
+                            className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950/80 text-slate-300 border border-slate-800"
+                          >
+                            {tech.startsWith("#") ? tech : `#${tech}`}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                   <div className="flex items-center justify-between pt-3 border-t border-slate-800/60 text-xs">
                     <div className="flex items-center gap-3 text-slate-400">
@@ -493,7 +531,8 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                   </div>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         )}
       </main>
