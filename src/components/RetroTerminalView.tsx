@@ -101,7 +101,7 @@ export default function RetroTerminalView({
         <div className={`${isLarge ? "text-xs sm:text-sm" : "text-xs"} text-slate-400 space-y-1 pt-1`}>
           <p className="text-emerald-300 flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>[SYS-MATRIX] 21개 프로젝트 아키텍처 인덱싱 완료 · 행(Row)을 클릭하면 <strong>Archify 시스템 구조도</strong>가 열립니다.</span>
+            <span>[SYS-MATRIX] {projects.length}개 프로젝트 아키텍처 인덱싱 완료 · 행(Row)을 클릭하면 <strong>Archify 시스템 구조도</strong>가 열립니다.</span>
           </p>
         </div>
       </div>

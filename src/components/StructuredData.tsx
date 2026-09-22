@@ -62,7 +62,7 @@ export default function StructuredData() {
         "@type": "ItemList",
         "@id": "https://dontotl.github.io/#projects",
         "name": "Curated Engineering & Architecture Projects",
-        "description": "21 Curated Cloud-Native, AI Agent, and Database Engineering Projects",
+        "description": `${allowedProjects.length} Curated Cloud-Native, AI Agent, and Database Engineering Projects`,
         "numberOfItems": allowedProjects.length,
         "itemListElement": allowedProjects.map((project, index) => {
           const curated = CURATED_PROJECT_DETAILS[project.name];
