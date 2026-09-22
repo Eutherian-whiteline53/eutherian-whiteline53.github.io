@@ -140,6 +140,7 @@ export default function RetroTerminalView({
                 return (
                   <tr
                     key={project.id}
+                    id={`term-${project.name}`}
                     onClick={() => onSelectProject(project)}
                     className="group hover:bg-emerald-950/40 hover:border-emerald-500/50 transition-all cursor-pointer border-b border-slate-900/90"
                   >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import {
   Search,
   Star,
@@ -98,6 +98,36 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const originalProjects = useMemo(() => {
     return data.projects.filter((p) => !p.isFork || p.name === "how-to-use-OCI");
   }, [data.projects]);
+
+  // URL Hash Deep Linking
+  const handleSelectProject = useCallback((project: Project | null) => {
+    setSelectedProject(project);
+    if (typeof window !== "undefined") {
+      if (project) {
+        window.history.replaceState(null, "", `#${project.name}`);
+      } else {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      const hash = window.location.hash.replace("#", "").trim();
+      if (hash) {
+        const match = originalProjects.find(
+          (p) => p.name.toLowerCase() === hash.toLowerCase()
+        );
+        if (match) {
+          setSelectedProject(match);
+        }
+      }
+    };
+
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, [originalProjects]);
 
   // 언어 목록 추출
   const languages = useMemo(() => {
@@ -239,7 +269,8 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
               return (
                 <div
                   key={project.id}
-                  onClick={() => setSelectedProject(project)}
+                  id={`repo-${project.name}`}
+                  onClick={() => handleSelectProject(project)}
                   className="group relative p-6 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/80 to-slate-900/80 border border-indigo-500/30 hover:border-indigo-500/70 transition-all duration-300 shadow-xl hover:shadow-indigo-500/10 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
                 >
                   <div>
@@ -271,47 +302,40 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                   </div>
 
                   <div>
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {project.language && (
-                        <span
-                          className={`text-[11px] font-medium px-2 py-0.5 rounded-md ${
-                            LANGUAGE_COLORS[project.language] || LANGUAGE_COLORS.Other
-                          }`}
-                        >
-                          {project.language}
-                        </span>
-                      )}
-                      {topTechs.map((tech) => (
-                        <span
-                          key={tech}
-                          className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/50"
-                        >
-                          {tech.startsWith("#") ? tech : `#${tech}`}
-                        </span>
-                      ))}
-                    </div>
+                    {topTechs.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-5">
+                        {topTechs.map((tech) => (
+                          <span
+                            key={tech}
+                            className="text-xs px-2 py-0.5 rounded-md bg-indigo-950/80 text-indigo-300 border border-indigo-800/50"
+                          >
+                            {tech.startsWith("#") ? tech : `#${tech}`}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-                  <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
-                      <span className="flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 text-amber-400" /> {project.stars}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <GitFork className="w-3.5 h-3.5 text-slate-400" /> {project.forks}
-                      </span>
-                    </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-indigo-500/20 text-xs">
+                      <div className="flex items-center gap-3 text-slate-400">
+                        <span className="flex items-center gap-1">
+                          <Star className="w-3.5 h-3.5 text-amber-400" /> {project.stars}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <GitFork className="w-3.5 h-3.5 text-slate-400" /> {project.forks}
+                        </span>
+                      </div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedProject(project);
-                        }}
-                        className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-950/80 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-700/50 transition-colors font-medium cursor-pointer"
-                      >
-                        상세 보기 <ArrowUpRight className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectProject(project);
+                          }}
+                          className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-950/80 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-700/50 transition-colors font-medium cursor-pointer"
+                        >
+                          상세 보기 <ArrowUpRight className="w-3.5 h-3.5" />
+                        </button>
                       {project.homepage && (
                         <a
                           href={project.homepage}
@@ -459,7 +483,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
         {viewMode === "terminal" ? (
           <RetroTerminalView
             projects={filteredProjects}
-            onSelectProject={setSelectedProject}
+            onSelectProject={handleSelectProject}
             searchQuery={searchQuery}
           />
         ) : filteredProjects.length === 0 ? (
@@ -479,7 +503,8 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
               return (
                 <div
                   key={project.id}
-                  onClick={() => setSelectedProject(project)}
+                  id={`repo-${project.name}`}
+                  onClick={() => handleSelectProject(project)}
                   className="group relative p-5 rounded-xl bg-slate-900/50 hover:bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 transition-all duration-200 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-950/50 cursor-pointer"
                 >
                   <div>
@@ -542,7 +567,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedProject(project);
+                          handleSelectProject(project);
                         }}
                         className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-700/50 transition-colors font-medium flex items-center gap-1 cursor-pointer"
                       >
@@ -566,7 +591,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                         rel="noreferrer"
                         title="GitHub Repository"
                         onClick={(e) => e.stopPropagation()}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                        className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
                       >
                         <GithubIcon className="w-3.5 h-3.5" />
                       </a>
@@ -583,7 +608,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
       {/* Project Detail Modal */}
       <ProjectModal
         project={selectedProject}
-        onClose={() => setSelectedProject(null)}
+        onClose={() => handleSelectProject(null)}
       />
 
       {/* Footer */}
