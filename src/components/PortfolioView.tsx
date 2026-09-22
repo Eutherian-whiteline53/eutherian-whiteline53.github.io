@@ -12,8 +12,11 @@ import {
   Code2,
   RefreshCw,
   ArrowUpRight,
+  Terminal,
+  LayoutGrid,
 } from "lucide-react";
 import ProjectModal from "./ProjectModal";
+import RetroTerminalView from "./RetroTerminalView";
 import { CURATED_PROJECT_DETAILS } from "@/data/projectDetails";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -89,6 +92,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [sortBy, setSortBy] = useState<"recent" | "stars" | "name">("recent");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [viewMode, setViewMode] = useState<"terminal" | "cards">("terminal");
 
   // Fork된 저장소는 제외 (단, how-to-use-OCI 등 예외 허용 프로젝트 포함)
   const originalProjects = useMemo(() => {
@@ -353,7 +357,37 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
             </div>
 
             {/* Sort & Quick Toggles */}
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+              {/* View Mode Toggle */}
+              <div className="flex items-center p-0.5 rounded-xl bg-slate-950 border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("terminal")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${
+                    viewMode === "terminal"
+                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30"
+                      : "text-slate-400 hover:text-emerald-300"
+                  }`}
+                  title="레트로 터미널 매트릭스 뷰"
+                >
+                  <Terminal className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>터미널 뷰</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode("cards")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    viewMode === "cards"
+                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                  title="모던 카드 그리드 뷰"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>카드 뷰</span>
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
@@ -364,7 +398,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                Featured만 보기
+                Featured만
               </button>
 
               <select
@@ -418,8 +452,14 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
           )}
         </div>
 
-        {/* Projects Grid */}
-        {filteredProjects.length === 0 ? (
+        {/* Projects Display (Terminal Matrix or Grid Cards) */}
+        {viewMode === "terminal" ? (
+          <RetroTerminalView
+            projects={filteredProjects}
+            onSelectProject={setSelectedProject}
+            searchQuery={searchQuery}
+          />
+        ) : filteredProjects.length === 0 ? (
           <div className="py-20 text-center rounded-2xl border border-dashed border-slate-800 bg-slate-900/20">
             <p className="text-slate-400 text-sm">일치하는 프로젝트가 없습니다.</p>
           </div>
