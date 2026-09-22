@@ -86,18 +86,23 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const [sortBy, setSortBy] = useState<"recent" | "stars" | "name">("recent");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+  // Fork된 저장소는 제외 (오리지널 프로젝트만 표시)
+  const originalProjects = useMemo(() => {
+    return data.projects.filter((p) => !p.isFork);
+  }, [data.projects]);
+
   // 언어 목록 추출
   const languages = useMemo(() => {
     const langs = new Set<string>();
-    data.projects.forEach((p) => {
+    originalProjects.forEach((p) => {
       if (p.language) langs.add(p.language);
     });
     return ["All", ...Array.from(langs).sort()];
-  }, [data.projects]);
+  }, [originalProjects]);
 
   // 필터링 및 정렬
   const filteredProjects = useMemo(() => {
-    return data.projects
+    return originalProjects
       .filter((project) => {
         const matchesSearch =
           project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -128,11 +133,11 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
         }
         return 0;
       });
-  }, [data.projects, searchQuery, selectedLanguage, showFeaturedOnly, sortBy]);
+  }, [originalProjects, searchQuery, selectedLanguage, showFeaturedOnly, sortBy]);
 
   const featuredProjects = useMemo(() => {
-    return data.projects.filter((p) => p.featured);
-  }, [data.projects]);
+    return originalProjects.filter((p) => p.featured);
+  }, [originalProjects]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex flex-col">
@@ -189,7 +194,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-300">
           <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl">
             <Layers className="w-4 h-4 text-indigo-400" />
-            <span>총 <strong>{data.totalCount}</strong>개 프로젝트</span>
+            <span>총 <strong>{originalProjects.length}</strong>개 프로젝트</span>
           </div>
           <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl">
             <Code2 className="w-4 h-4 text-blue-400" />

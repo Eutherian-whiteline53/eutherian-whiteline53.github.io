@@ -6,7 +6,6 @@ import {
   ExternalLink,
   Star,
   GitFork,
-  Calendar,
   Layers,
   CheckCircle2,
   Cpu,
@@ -14,7 +13,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { Project } from "./PortfolioView";
-import { CURATED_PROJECT_DETAILS } from "@/data/projectDetails";
+import { CURATED_PROJECT_DETAILS, getProjectArchitecture } from "@/data/projectDetails";
+import ArchitectureVisualizer from "./ArchitectureVisualizer";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -51,6 +51,12 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
   if (!project) return null;
 
   const curated = CURATED_PROJECT_DETAILS[project.name] || null;
+  const archSteps = getProjectArchitecture(
+    project.name,
+    project.language,
+    project.topics,
+    project.homepage
+  );
 
   return (
     <div
@@ -64,7 +70,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 p-5 sm:p-6 flex items-start justify-between gap-4">
+        <div className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 p-5 sm:p-6 flex items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
               {project.featured && (
@@ -91,7 +97,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
             aria-label="닫기"
           >
             <X className="w-5 h-5" />
@@ -103,11 +109,16 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
           {/* Overview Section */}
           <section className="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
             <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4" /> 프로젝트 소개 (Overview)
+              <BookOpen className="w-4 h-4" /> 프로젝트 개요 (Overview)
             </h3>
             <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
               {curated?.overview || project.description}
             </p>
+          </section>
+
+          {/* Archify Section (Architecture Diagram) */}
+          <section>
+            <ArchitectureVisualizer steps={archSteps} />
           </section>
 
           {/* Tech Stack Section */}
@@ -160,11 +171,11 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
             )}
           </section>
 
-          {/* Architecture & Highlights Section */}
+          {/* Architecture Highlights Section */}
           {(curated?.architecture || curated?.highlights) && (
             <section>
               <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <Layers className="w-4 h-4" /> 아키텍처 & 핵심 설계 (Architecture & Highlights)
+                <Layers className="w-4 h-4" /> 주요 설계 및 해결 과제 (Highlights)
               </h3>
               <div className="space-y-2.5">
                 {curated.architecture?.map((point, index) => (
@@ -211,7 +222,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 </span>
               </div>
               <div className="p-3 rounded-xl bg-slate-950/30 border border-slate-800/60">
-                <span className="text-slate-400 block mb-1">생성일</span>
+                <span className="text-slate-400 block mb-1">최초 생성</span>
                 <span className="font-semibold text-slate-200">
                   {new Date(project.createdAt).toLocaleDateString("ko-KR")}
                 </span>

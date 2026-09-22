@@ -38,9 +38,9 @@ async function fetchAllRepos() {
 
   console.log(`Total repos fetched from GitHub API: ${repos.length}`);
 
-  // 데이터 정제 및 가공
+  // 데이터 정제 및 가공 (Fork된 레포지토리는 포트폴리오에서 제외)
   const processed = repos
-    .filter((repo) => !IGNORED_REPOS.includes(repo.name))
+    .filter((repo) => !IGNORED_REPOS.includes(repo.name) && !repo.fork)
     .map((repo) => ({
       id: repo.id,
       name: repo.name,
