@@ -63,6 +63,9 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Java: "bg-amber-600 text-white",
   Go: "bg-cyan-500 text-white",
   Rust: "bg-orange-700 text-white",
+  Shell: "bg-emerald-600 text-white",
+  "Jupyter Notebook": "bg-amber-600 text-white",
+  PLSQL: "bg-rose-600 text-white",
   Other: "bg-slate-600 text-slate-200",
 };
 
@@ -86,9 +89,9 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const [sortBy, setSortBy] = useState<"recent" | "stars" | "name">("recent");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  // Fork된 저장소는 제외 (오리지널 프로젝트만 표시)
+  // Fork된 저장소는 제외 (단, how-to-use-OCI 등 예외 허용 프로젝트 포함)
   const originalProjects = useMemo(() => {
-    return data.projects.filter((p) => !p.isFork);
+    return data.projects.filter((p) => !p.isFork || p.name === "how-to-use-OCI");
   }, [data.projects]);
 
   // 언어 목록 추출

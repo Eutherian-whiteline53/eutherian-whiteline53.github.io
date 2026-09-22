@@ -291,6 +291,54 @@ export const CURATED_PROJECT_DETAILS: Record<string, ProjectArchitectureInfo> = 
       },
     ],
   },
+  "how-to-use-OCI": {
+    overview:
+      "도서 『바로 쓰는 오라클 클라우드 - Build and Deploy Modern Apps with Oracle Cloud』의 전체 실습 소스코드 및 클라우드 네이티브 아키텍처 가이드 저장소입니다. OCI(Oracle Cloud Infrastructure)를 활용한 컨테이너 기반 마이크로서비스 배포, IaC(Terraform) 자동화, 자율운영 데이터베이스(Autonomous DB) 연동 및 엔터프라이즈 모던 앱 개발 기법을 제공합니다.",
+    role: "도서 저술 및 OCI 클라우드 네이티브 실습 아키텍처 설계",
+    techStack: [
+      { category: "Cloud & Infrastructure", items: ["Oracle Cloud Infrastructure (OCI)", "OKE (Kubernetes)", "Compute & VCN", "Autonomous DB"] },
+      { category: "DevOps & IaC", items: ["Terraform", "OCI Resource Manager", "Docker", "GitHub Actions"] },
+      { category: "Application & Guides", items: ["Jupyter Notebook", "Python", "Node.js", "REST APIs"] },
+    ],
+    architecture: [
+      "클라우드 네이티브 풀스택 아키텍처: VCN 네트워크 가상화부터 OKE 컨테이너 클러스터, Autonomous Database 연동까지의 전 주기 구성",
+      "Terraform 기반 IaC 자동화: OCI 인프라 리소스를 코드로 손쉽게 프로비저닝하고 배포하는 자동화 템플릿 제공",
+      "단계별 실습 가이드: 챕터별 핸즈온 랩(Hands-on Lab)과 실전 예제 코드로 클라우드 전환 및 모던 앱 배포 파이프라인 완성",
+    ],
+    highlights: [
+      "도서 『바로 쓰는 오라클 클라우드』 공식 실습 레퍼런스 저장소",
+      "엔터프라이즈 환경에 바로 적용 가능한 OCI 클라우드 네이티브 모범 사례 및 튜토리얼 수록",
+    ],
+    diagram: [
+      {
+        layer: "1. Hands-on Labs & Client Layer",
+        badge: "Jupyter / CLI / IaC",
+        badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+        components: [
+          { title: "Interactive Lab Notebooks", desc: "도서 챕터별 단계적 클라우드 실습 가이드", tech: "Jupyter / Python" },
+          { title: "Terraform IaC Templates", desc: "원클릭 OCI 클라우드 인프라 자동 배포 코드", tech: "Terraform HCL" },
+        ],
+      },
+      {
+        layer: "2. Cloud Native Infrastructure (OCI)",
+        badge: "OCI Managed Services",
+        badgeColor: "bg-indigo-500/20 text-indigo-300 border-indigo-500/40",
+        components: [
+          { title: "OKE (Container Engine)", desc: "컨테이너 기반 마이크로서비스 및 워크로드 관리", tech: "Kubernetes / Docker" },
+          { title: "API Gateway & Load Balancer", desc: "외부 트래픽 제어, 라우팅 및 SSL 종료", tech: "OCI Gateway" },
+        ],
+      },
+      {
+        layer: "3. Data & Enterprise Backends",
+        badge: "Autonomous DB / Storage",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+        components: [
+          { title: "Autonomous Database", desc: "자동 튜닝/보안 적용 고성능 트랜잭션 & 분석 DB", tech: "Oracle DB 23c" },
+          { title: "OCI Object Storage & Vault", desc: "대용량 비정형 데이터 및 보안 키 관리", tech: "Object Storage / KMS" },
+        ],
+      },
+    ],
+  },
 };
 
 // 커스텀 다이어그램이 없는 프로젝트를 위해 언어/토픽 기반으로 스마트 아키텍처 다이어그램 자동 생성

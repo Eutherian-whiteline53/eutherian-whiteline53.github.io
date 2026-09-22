@@ -5,7 +5,19 @@ const USERNAME = "dontotl";
 const TOKEN = process.env.GITHUB_TOKEN || "";
 
 // 포트폴리오에 우선 노출하거나 강조할 프로젝트 목록 (원하는 대로 커스텀 가능)
-const FEATURED_REPOS = ["dcimg", "fastfind-mac", "mentor-lane", "mentor-memo", "seven2"];
+const FEATURED_REPOS = [
+  "how-to-use-OCI",
+  "mentor-lane-voice-lab",
+  "mentor-memory-fragments",
+  "genai-benchmark",
+  "MSA-k8s-cicd",
+  "dcimg",
+  "fastfind-mac",
+  "seven2",
+];
+
+// Fork 저장소 중 예외적으로 포트폴리오에 포함할 저장소
+const ALLOWED_FORK_REPOS = ["how-to-use-OCI"];
 
 // 포트폴리오에서 제외하고 싶은 레포지토리 (필요 시 추가)
 const IGNORED_REPOS = ["dontotl.github.io"];
@@ -38,9 +50,13 @@ async function fetchAllRepos() {
 
   console.log(`Total repos fetched from GitHub API: ${repos.length}`);
 
-  // 데이터 정제 및 가공 (Fork된 레포지토리는 포트폴리오에서 제외)
+  // 데이터 정제 및 가공 (Fork된 레포지토리는 기본 제외하되, ALLOWED_FORK_REPOS는 예외 허용)
   const processed = repos
-    .filter((repo) => !IGNORED_REPOS.includes(repo.name) && !repo.fork)
+    .filter((repo) => {
+      if (IGNORED_REPOS.includes(repo.name)) return false;
+      if (repo.fork && !ALLOWED_FORK_REPOS.includes(repo.name)) return false;
+      return true;
+    })
     .map((repo) => ({
       id: repo.id,
       name: repo.name,
