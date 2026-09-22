@@ -11,7 +11,9 @@ import {
   Layers,
   Code2,
   RefreshCw,
+  ArrowUpRight,
 } from "lucide-react";
+import ProjectModal from "./ProjectModal";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -82,6 +84,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const [selectedLanguage, setSelectedLanguage] = useState<string>("All");
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [sortBy, setSortBy] = useState<"recent" | "stars" | "name">("recent");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   // 언어 목록 추출
   const languages = useMemo(() => {
@@ -96,7 +99,6 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
   const filteredProjects = useMemo(() => {
     return data.projects
       .filter((project) => {
-        // 검색어 필터
         const matchesSearch =
           project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -104,12 +106,10 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
 
         if (!matchesSearch) return false;
 
-        // 언어 필터
         if (selectedLanguage !== "All" && project.language !== selectedLanguage) {
           return false;
         }
 
-        // Featured 필터
         if (showFeaturedOnly && !project.featured) {
           return false;
         }
@@ -183,7 +183,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
         </h1>
         <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
           GitHub 레포지토리와 실시간으로 동기화되어 배포되는 자동화 포트폴리오입니다.
-          AI 에이전트, Next.js 웹 애플리케이션, 오픈소스 프로젝트를 한눈에 둘러보세요.
+          카드를 클릭하면 각 프로젝트의 <strong>아키텍처, 기술 스택, 핵심 설계 포인트</strong>를 자세히 확인할 수 있습니다.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-300">
@@ -205,24 +205,31 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
       {/* Featured Projects Highlight (if any) */}
       {featuredProjects.length > 0 && !searchQuery && selectedLanguage === "All" && (
         <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 mb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-xl font-bold text-slate-100">Featured Projects</h2>
+          <div className="flex items-center justify-between gap-2 mb-6">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-400" />
+              <h2 className="text-xl font-bold text-slate-100">Featured Projects</h2>
+            </div>
+            <span className="text-xs text-slate-400">카드를 클릭하여 상세 아키텍처 보기</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredProjects.map((project) => (
               <div
                 key={project.id}
-                className="group relative p-6 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/80 to-slate-900/80 border border-indigo-500/30 hover:border-indigo-500/60 transition-all duration-300 shadow-xl hover:shadow-indigo-500/10 flex flex-col justify-between"
+                onClick={() => setSelectedProject(project)}
+                className="group relative p-6 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/80 to-slate-900/80 border border-indigo-500/30 hover:border-indigo-500/70 transition-all duration-300 shadow-xl hover:shadow-indigo-500/10 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                       ★ Featured
                     </span>
-                    <span className="text-xs text-slate-400 flex items-center gap-1">
-                      <RefreshCw className="w-3 h-3" /> {timeAgo(project.pushedAt)}
-                    </span>
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      <span className="flex items-center gap-1">
+                        <RefreshCw className="w-3 h-3" /> {timeAgo(project.pushedAt)}
+                      </span>
+                      <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                    </div>
                   </div>
 
                   <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
@@ -263,7 +270,8 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                           href={project.homepage}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-colors shadow-md shadow-indigo-600/20"
                         >
                           <ExternalLink className="w-3.5 h-3.5" /> Live Demo
                         </a>
@@ -272,6 +280,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                         href={project.htmlUrl}
                         target="_blank"
                         rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition-colors"
                       >
                         <GithubIcon className="w-3.5 h-3.5" /> Code
@@ -351,7 +360,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
         {/* Results Counter */}
         <div className="flex items-center justify-between text-xs text-slate-400 mb-4 px-1">
           <span>
-            총 <strong>{filteredProjects.length}</strong>개의 프로젝트 표시 중
+            총 <strong>{filteredProjects.length}</strong>개의 프로젝트 (카드를 클릭하여 상세 정보 보기)
           </span>
           {searchQuery && (
             <button
@@ -378,7 +387,8 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="group relative p-5 rounded-xl bg-slate-900/50 hover:bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 transition-all duration-200 flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-950/50"
+                onClick={() => setSelectedProject(project)}
+                className="group relative p-5 rounded-xl bg-slate-900/50 hover:bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 transition-all duration-200 flex flex-col justify-between hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-950/50 cursor-pointer"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-2.5">
@@ -389,9 +399,10 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                     >
                       {project.language}
                     </span>
-                    <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                      {timeAgo(project.pushedAt)}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                      <span>{timeAgo(project.pushedAt)}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 transition-colors" />
+                    </div>
                   </div>
 
                   <h3 className="font-bold text-base text-slate-100 group-hover:text-indigo-300 transition-colors mb-2 break-all">
@@ -434,6 +445,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                           target="_blank"
                           rel="noreferrer"
                           title="Live Demo"
+                          onClick={(e) => e.stopPropagation()}
                           className="p-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-600 text-indigo-300 hover:text-white transition-colors"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -444,6 +456,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                         target="_blank"
                         rel="noreferrer"
                         title="GitHub Repository"
+                        onClick={(e) => e.stopPropagation()}
                         className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
                       >
                         <GithubIcon className="w-3.5 h-3.5" />
@@ -456,6 +469,12 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
           </div>
         )}
       </main>
+
+      {/* Project Detail Modal */}
+      <ProjectModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
