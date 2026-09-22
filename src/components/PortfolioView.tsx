@@ -158,24 +158,27 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
       <header className="relative z-10 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md sticky top-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-blue-500 flex items-center justify-center font-bold text-lg shadow-lg shadow-indigo-500/20">
-              D
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-blue-500 flex items-center justify-center font-mono font-bold text-lg text-white shadow-lg shadow-indigo-500/20">
+              d
             </div>
-            <a href={`https://github.com/${data.username}`} target="_blank" rel="noreferrer" className="font-semibold text-lg hover:text-indigo-400 transition-colors">
-              {data.username}
-            </a>
+            <div>
+              <a href={`https://github.com/${data.username}`} target="_blank" rel="noreferrer" className="font-bold font-mono text-lg text-slate-100 hover:text-indigo-400 transition-colors flex items-center gap-2">
+                <span>dontotl.systems</span>
+                <span className="text-[11px] px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-700/50 text-indigo-300 font-sans font-medium">Architecture</span>
+              </a>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 text-sm">
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-3 py-1 rounded-full">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-3 py-1 rounded-full font-mono">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>GitHub Auto-Sync Active</span>
+              <span>CI/CD Auto-Sync Active</span>
             </div>
             <a
               href={`https://github.com/${data.username}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 transition-colors text-slate-200"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/60 transition-colors text-slate-200 text-xs font-medium"
             >
               <GithubIcon className="w-4 h-4" />
               <span className="hidden sm:inline">GitHub Profile</span>
@@ -186,30 +189,30 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
 
       {/* Hero Section */}
       <section className="relative z-10 py-16 sm:py-20 px-4 sm:px-6 max-w-5xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/70 border border-indigo-800/50 text-indigo-300 text-xs font-medium mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Automated Repository Portfolio</span>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-950/70 border border-indigo-800/50 text-indigo-300 text-xs font-medium mb-6">
+          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <span>Autonomous AI & Cloud-Native Architecture</span>
         </div>
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-400 mb-6">
-          Building AI & Full-Stack Systems
+        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-400 mb-6 leading-tight">
+          Building Autonomous AI &<br className="hidden sm:inline" /> Cloud-Native Systems
         </h1>
-        <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
-          GitHub 레포지토리와 실시간으로 동기화되어 배포되는 자동화 포트폴리오입니다.
-          카드를 클릭하면 각 프로젝트의 <strong>아키텍처, 기술 스택, 핵심 설계 포인트</strong>를 자세히 확인할 수 있습니다.
+        <p className="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed mb-8 font-normal">
+          데이터베이스 코어부터 클라우드 인프라, 자율형 AI 에이전트까지 —<br className="hidden sm:inline" />
+          시스템의 시작과 끝을 설계하고 코드로 증명합니다.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-300">
           <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl">
             <Layers className="w-4 h-4 text-indigo-400" />
-            <span>총 <strong>{originalProjects.length}</strong>개 프로젝트</span>
+            <span>총 <strong>{originalProjects.length}</strong>개 시스템 아카이브</span>
           </div>
           <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl">
             <Code2 className="w-4 h-4 text-blue-400" />
-            <span><strong>{languages.length - 1}</strong>개 기술 스택</span>
+            <span><strong>{languages.length - 1}</strong>개 핵심 기술 스택</span>
           </div>
           <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-xl">
             <Calendar className="w-4 h-4 text-emerald-400" />
-            <span>마지막 동기화: {new Date(data.updatedAt).toLocaleDateString("ko-KR")}</span>
+            <span>실시간 자동 동기화: {new Date(data.updatedAt).toLocaleDateString("ko-KR")}</span>
           </div>
         </div>
       </section>
@@ -586,7 +589,7 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
       {/* Footer */}
       <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
         <p className="mb-2">
-          © {new Date().getFullYear()} <strong>{data.username}</strong>. Hosted on GitHub Pages.
+          © {new Date().getFullYear()} <strong>dontotl.systems</strong>. Hosted on GitHub Pages.
         </p>
         <p className="text-slate-600">
           Powered by Next.js & GitHub Actions · Automatically synced with GitHub Repositories.

@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "dontotl | Developer Portfolio",
-  description: "Automated GitHub-synced portfolio showcasing AI, Full-Stack, and Open Source projects by dontotl.",
-  keywords: ["dontotl", "portfolio", "developer", "nextjs", "github-pages", "full-stack", "ai"],
+  title: "dontotl.systems | Building Autonomous AI & Cloud-Native Systems",
+  description: "데이터베이스 코어부터 클라우드 인프라, 자율형 AI 에이전트까지 — 시스템의 시작과 끝을 설계하고 코드로 증명합니다.",
+  keywords: ["dontotl", "dontotl.systems", "cloud-native", "oracle-cloud", "ai-agents", "database", "portfolio", "nextjs", "github-pages"],
   authors: [{ name: "dontotl", url: "https://github.com/dontotl" }],
 };
 
