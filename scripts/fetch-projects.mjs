@@ -1,12 +1,23 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { execSync } from "node:child_process";
 
 const USERNAME = "dontotl";
-const TOKEN = process.env.GITHUB_TOKEN || "";
+let TOKEN = process.env.GITHUB_TOKEN || "";
+if (!TOKEN) {
+  try {
+    TOKEN = execSync("gh auth token", { encoding: "utf-8" }).trim();
+  } catch {
+    // ignore
+  }
+}
 
 // 포트폴리오에 우선 노출하거나 강조할 프로젝트 목록 (원하는 대로 커스텀 가능)
 const FEATURED_REPOS = [
   "how-to-use-OCI",
+  "workplace-toolkit",
+  "ai-lecture-environment",
+  "naver-blog-crawler",
   "mentor-lane-voice-lab",
   "mentor-memory-fragments",
   "genai-benchmark",

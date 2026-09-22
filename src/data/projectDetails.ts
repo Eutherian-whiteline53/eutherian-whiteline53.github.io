@@ -23,6 +23,150 @@ export interface ProjectArchitectureInfo {
 
 // 주요 대표 프로젝트들의 심층 아키텍처 및 상세 소개 데이터
 export const CURATED_PROJECT_DETAILS: Record<string, ProjectArchitectureInfo> = {
+  "workplace-toolkit": {
+    overview:
+      "OpenAI Codex CLI 환경에서 팀과 개인이 안전하게 공유·재사용할 수 있는 엔터프라이즈급 업무 자동화 스킬(Skills) 패키지입니다. 개인 경로 및 사내 민감 데이터를 철저히 격리하며 리서치, 무결성 보존 PPT 번역, 회의/방문 보고서 자동화, 멀티미디어 발표 영상 제작 파이프라인을 제공합니다.",
+    role: "AI Agent Skills Architecture & Workflow Engineering",
+    techStack: [
+      { category: "Agent & Automation", items: ["OpenAI Codex CLI", "Custom Skills Runtime", "Prompt Engineering"] },
+      { category: "Document & XML Engine", items: ["Python 3.11+", "lxml (OOXML Parser)", "JSON Manifest Hashing"] },
+      { category: "Media & Voice", items: ["Local TTS Engine", "Local ASR", "FFmpeg Multi-stream"] },
+    ],
+    architecture: [
+      "원자적 매니페스트 해시 파이프라인: 원본 PPTX에서 OOXML 텍스트 노드를 추출하여 ID/해시 매핑 후 번역을 수행하여 레이아웃·서식 손실 원천 방지",
+      "Zero Data Leakage 경계 설계: 사용자 로컬 환경과 승인된 도구 세션 내에서만 동작하며 외부로 사내 데이터 유출 차단",
+      "CLI 기반 원자적 배포기: scripts/distribution.py를 통한 안전한 dry-run 및 무중단 스킬 설치/동기화 지원",
+    ],
+    highlights: [
+      "4대 엔터프라이즈 핵심 스킬(workplace-research, ppt-translator, visit-call-report, presentation-studio) 완비",
+      "부호, 통화, 단위, 보호 용어를 자동 검증하는 규칙 기반 무결성 검수기 탑재",
+    ],
+    diagram: [
+      {
+        layer: "1. Interface & Agent Layer",
+        badge: "Codex CLI / Skill Spec",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+        components: [
+          { title: "Codex Skills Dispatcher", desc: "프롬프트 분석 및 스킬 라우팅", tech: "Codex Agent Runtime" },
+          { title: "Distribution CLI", desc: "원자적 스킬 설치 및 환경 검증", tech: "Python Distribution CLI" },
+        ],
+      },
+      {
+        layer: "2. Automation & Pipeline Engine",
+        badge: "Core Engines",
+        badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+        components: [
+          { title: "OOXML Parser & Hash Validator", desc: "PPTX 텍스트 노드 추출 및 번역 무결성 검증", tech: "lxml / JSON Manifest" },
+          { title: "Report Synthesizer", desc: "고객사 미팅 메모 및 히스토리 기반 마크다운 표준화", tech: "Standard Formatter" },
+        ],
+      },
+      {
+        layer: "3. Local Media & Connectors",
+        badge: "Local Runtime",
+        badgeColor: "bg-indigo-500/20 text-indigo-300 border-indigo-500/40",
+        components: [
+          { title: "TTS & ASR Speech Pipeline", desc: "로컬 음성 합성 및 발화 인식 검수", tech: "Local Speech Engine" },
+          { title: "FFmpeg Studio", desc: "음성 타이밍에 동기화된 MP4 영상 및 SRT 자막 합성", tech: "FFmpeg Stream" },
+        ],
+      },
+    ],
+  },
+  "ai-lecture-environment": {
+    overview:
+      "최신 엔터프라이즈 데이터베이스인 Oracle Database 23ai Free와 생성형 AI(RAG) 실습을 컨테이너 기반으로 즉시 구동하고, 코딩 에이전트(Codex)와 함께 인터랙티브하게 학습할 수 있는 올인원 셀프 데모·교육 플랫폼입니다.",
+    role: "Full-Stack AI Lab Platform & Container Architecture",
+    techStack: [
+      { category: "Infrastructure & DevOps", items: ["Docker Compose v2", "Nginx Reverse Proxy", "Multi-arch (ARM64 / AMD64)"] },
+      { category: "Database & Core", items: ["Oracle Database 23ai Free", "SQLAlchemy", "Vector / JSON Duality"] },
+      { category: "App & Dashboard", items: ["FastAPI", "React 19 / Vite", "Supervisor Daemon"] },
+    ],
+    architecture: [
+      "격리형 동적 데모 런타임 (Dynamic Demo Runtime): 수강생의 과제물(/labs/demos)을 독립 컨테이너 프로세스로 격리 구동하고 Supervisor로 라이프사이클 관리",
+      "멀티 아키텍처 네이티브 대응: Apple Silicon (macOS arm64) 및 Windows/Linux (amd64) 전용 오케스트레이션 환경 파일 분리 제공",
+      "실시간 헬스체크 및 프록시 라우팅: Nginx를 통해 UI(포트 8080)와 백엔드 API, 동적 데모 엔드포인트를 단일 진입점으로 통합 중계",
+    ],
+    highlights: [
+      "사내 규정 문서 기반의 실무 RAG(검색, 출처 인용, 답변 생성) 코스웨어 기본 내장",
+      "scripts/new-course.sh를 통한 신규 강의 커리큘럼 자동 스캐폴딩 지원",
+    ],
+    diagram: [
+      {
+        layer: "1. Client & Gateway Layer",
+        badge: "Web & Reverse Proxy",
+        badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+        components: [
+          { title: "Interactive Lecture UI", desc: "실시간 퀴즈 및 데모 컨트롤러 대시보드", tech: "React 19 / Vite" },
+          { title: "Nginx Gateway", desc: "API 및 동적 실습 엔드포인트 역방향 프록시", tech: "Nginx Reverse Proxy" },
+        ],
+      },
+      {
+        layer: "2. App & Sandbox Runtime",
+        badge: "FastAPI & Supervisor",
+        badgeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+        components: [
+          { title: "Lab Supervisor Daemon", desc: "수강생 구현물 프로세스 격리 및 라이프사이클 관리", tech: "Supervisor Daemon" },
+          { title: "FastAPI Controller", desc: "컨테이너 헬스체크 및 실습 메타데이터 동기화", tech: "Python FastAPI" },
+        ],
+      },
+      {
+        layer: "3. Database & Storage Layer",
+        badge: "Oracle 23ai Free",
+        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-500/40",
+        components: [
+          { title: "Oracle DB 23ai Free", desc: "벡터 임베딩 인덱스 및 JSON 관계형 듀얼리티 저장소", tech: "Oracle 23ai" },
+          { title: "Persistent Storage Volumes", desc: "코스웨어 및 수강생 실습 데이터 보존", tech: "Docker Named Volumes" },
+        ],
+      },
+    ],
+  },
+  "naver-blog-crawler": {
+    overview:
+      "특정 네이버 블로그의 모든 포스팅과 첨부 이미지를 전자동으로 전수 수집하여 로컬 마크다운 문서 및 이미지 아카이브로 변환·저장하는 CLI 도구이자 Claude Code 및 Codex 연동 AI 에이전트 스킬입니다.",
+    role: "Web Scraping & Agent Skill Engineering",
+    techStack: [
+      { category: "Scraping & Parsing", items: ["Python 3.10+", "BeautifulSoup4", "Requests Session"] },
+      { category: "Document Conversion", items: ["Markdownify", "HTML DOM Normalizer", "Relative Path Remapping"] },
+      { category: "Agent Integration", items: ["Claude Code Skill (SKILL.md)", "Codex / Agent Instructions (AGENTS.md)"] },
+    ],
+    architecture: [
+      "2단계 비동기 파이프라인: PostTitleListAsync.naver로 전체 logNo 목록을 페이지네이션 수집 후, 모바일 뷰(m.blog.naver.com)로부터 본문 및 이미지 고속 추출",
+      "안전한 Rate Limiting & 지능형 지연: IP 차단 및 캡차 발생을 원천 방지하기 위해 요청 간 0.7초 안전 딜레이 적용",
+      "로컬 상대경로 자동 리매핑: 이미지를 output/{logNo}/images/에 보존하고 마크다운 본문의 img 태그를 상대경로로 자동 변환",
+    ],
+    highlights: [
+      "개인 블로그 전수 백업 및 옵시디언/노션 이관용 마크다운 완벽 지원",
+      "AI 코딩 도구(Claude Code, Codex)에서 대화형으로 즉시 구동 가능한 스킬 매니페스트 포함",
+    ],
+    diagram: [
+      {
+        layer: "1. Trigger & Interface",
+        badge: "CLI / Agent Skill",
+        badgeColor: "bg-amber-500/20 text-amber-300 border-amber-500/40",
+        components: [
+          { title: "CLI Argument Parser", desc: "블로그 ID, 출력 경로, 딜레이 옵션 처리", tech: "Python Argparse" },
+          { title: "Claude Code / Codex Skill", desc: "자연어 프롬프트 기반 크롤링 명령 바인딩", tech: "SKILL.md & AGENTS.md" },
+        ],
+      },
+      {
+        layer: "2. Scraper & Content Normalizer",
+        badge: "Crawling Engine",
+        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+        components: [
+          { title: "Async List Collector", desc: "PostTitleListAsync 기반 페이지 단위 logNo 전수 수집", tech: "Requests API" },
+          { title: "Mobile DOM Cleaner", desc: "스마트에디터 3.0 / 본문 HTML 정리 및 노이즈 제거", tech: "BeautifulSoup4" },
+        ],
+      },
+      {
+        layer: "3. Local Storage & Markdown Generator",
+        badge: "Archive Engine",
+        badgeColor: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+        components: [
+          { title: "Markdownify Transformer", desc: "HTML 요소를 표준 마크다운 문법으로 변환", tech: "Markdownify" },
+          { title: "Image Asset Archiver", desc: "이미지 스트리밍 다운로드 및 상대경로 리매핑", tech: "File System Stream" },
+        ],
+      },
+    ],
+  },
   dcimg: {
     overview:
       "디시인사이드의 특정 태그([ㅇㅎ]) 게시글을 실시간 베스트와 마이너 갤러리 검색 결과로부터 수집하여 카드 형태로 시각화해 주는 Next.js 웹 애플리케이션입니다.",

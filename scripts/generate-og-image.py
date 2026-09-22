@@ -93,7 +93,7 @@ for tag, bg_col, text_col in tags:
 draw.line([(80, 530), (W - 80, 530)], fill=(51, 65, 85, 120), width=1)
 
 draw.text((80, 545), "https://dontotl.github.io", font=font_url, fill=(56, 189, 248))
-draw.text((W - 350, 545), "21 Curated Projects & Architecture", font=font_badge, fill=(148, 163, 184))
+draw.text((W - 350, 545), "24 Curated Projects & Architecture", font=font_badge, fill=(148, 163, 184))
 
 # Convert to RGB and save
 final_img = img.convert('RGB')
