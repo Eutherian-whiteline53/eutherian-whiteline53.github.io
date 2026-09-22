@@ -265,6 +265,16 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                     </div>
 
                     <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProject(project);
+                        }}
+                        className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-950/80 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-700/50 transition-colors font-medium cursor-pointer"
+                      >
+                        상세 보기 <ArrowUpRight className="w-3.5 h-3.5" />
+                      </button>
                       {project.homepage && (
                         <a
                           href={project.homepage}
@@ -439,6 +449,16 @@ export default function PortfolioView({ data }: { data: PortfolioData }) {
                     </div>
 
                     <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedProject(project);
+                        }}
+                        className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-700/50 transition-colors font-medium flex items-center gap-1 cursor-pointer"
+                      >
+                        상세 보기 <ArrowUpRight className="w-3 h-3" />
+                      </button>
                       {project.homepage && (
                         <a
                           href={project.homepage}
